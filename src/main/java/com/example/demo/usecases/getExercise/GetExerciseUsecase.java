@@ -12,9 +12,13 @@ import com.example.demo.usecases.IUsecaseResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.stereotype.Service;
+
 import java.util.HashMap;
 import java.util.Optional;
 
+
+@Service
 public class GetExerciseUsecase extends AbstractUsecase {
 
     private static final Logger logger = LoggerFactory.getLogger(GetExerciseUsecase.class);
@@ -33,21 +37,15 @@ public class GetExerciseUsecase extends AbstractUsecase {
     @Override
     public Optional<IUsecaseResponse> execute(IDataModel usecaseExercise) throws Exception {
 
-        try {
-            Optional<FetchedExercise> fetchedExercise = this.serverSideAdapter.getExercise(usecaseExercise);
+        Optional<FetchedExercise> fetchedExercise = this.serverSideAdapter.getExercise(usecaseExercise);
 
-            if (fetchedExercise.isEmpty()) {
-                ExerciseUuid providedExercise = (ExerciseUuid) usecaseExercise;
-                String errorMessage = "No exercise found with uuid : " + providedExercise.uuid();
-                logger.error(errorMessage);
-                throw new ResourceNotFoundException(errorMessage);
-            } else {
-                return fetchedExercise.map(exercise -> (IUsecaseResponse) exercise);
-            }
-
-        } catch (Exception genericException) {
-            logger.error("Unexpected error in database processing", genericException);
-            throw genericException;
+        if (fetchedExercise.isEmpty()) {
+            ExerciseUuid providedExercise = (ExerciseUuid) usecaseExercise;
+            String errorMessage = "No exercise found with uuid : " + providedExercise.uuid() + "(may come from an unexpected error with database)";
+            logger.error(errorMessage);
+            throw new ResourceNotFoundException(errorMessage);
+        } else {
+            return fetchedExercise.map(exercise -> (IUsecaseResponse) exercise);
         }
 
     }

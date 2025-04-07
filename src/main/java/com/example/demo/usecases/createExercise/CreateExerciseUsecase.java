@@ -22,8 +22,10 @@ import java.util.Optional;
 import java.text.MessageFormat;
 
 import com.google.gson.Gson;
+import org.springframework.stereotype.Service;
 
 
+@Service
 public class CreateExerciseUsecase extends AbstractUsecase {
 
     private static final Logger logger = LoggerFactory.getLogger(CreateExerciseUsecase.class);
@@ -84,19 +86,14 @@ public class CreateExerciseUsecase extends AbstractUsecase {
         String logMessage = MessageFormat.format("Creation of a usecases exercise with the following data : {0}", usecaseRequestDataAsJson);
         logger.info(logMessage);
 
-        try {
-            Optional<CreatedExercise> createdExercise = this.serverSideAdapter.addExercise(usecaseRequest);
+        Optional<CreatedExercise> createdExercise = this.serverSideAdapter.addExercise(usecaseRequest);
 
-            if (createdExercise.isEmpty()) {
-                String errorMessage = "Issue during exercise insertion into database";
-                logger.error(errorMessage);
-                throw new IllegalArgumentException(errorMessage);
-            } else {
-                return createdExercise.map(exercise -> (IUsecaseResponse) exercise);
-            }
-        } catch (Exception genericException) {
-            logger.error("Unexpected error in database processing", genericException);
-            throw genericException;
+        if (createdExercise.isEmpty()) {
+            String errorMessage = "Issue during exercise insertion into database";
+            logger.error(errorMessage);
+            throw new IllegalArgumentException(errorMessage);
+        } else {
+            return createdExercise.map(exercise -> (IUsecaseResponse) exercise);
         }
 
     }

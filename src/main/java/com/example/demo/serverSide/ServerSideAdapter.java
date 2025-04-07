@@ -30,15 +30,19 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import org.springframework.stereotype.Component;
+
+
+@Component
 public class ServerSideAdapter implements IExerciseServerSide {
 
     private static final Logger logger = LoggerFactory.getLogger(ServerSideAdapter.class);
-    public DataSource databaseConnector;
     private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final DataSource dataSource;
 
-    public ServerSideAdapter (DataSource databaseConnector) {
-        this.databaseConnector = databaseConnector;
-        jdbcTemplate = new NamedParameterJdbcTemplate(this.databaseConnector);
+    public ServerSideAdapter (DataSource dataSource) {
+        this.dataSource = dataSource;
+        jdbcTemplate = new NamedParameterJdbcTemplate(this.dataSource);
     }
 
     @Override
@@ -107,7 +111,7 @@ public class ServerSideAdapter implements IExerciseServerSide {
                 new FetchedExerciseRowMapper()
             );
             return Optional.of(exercise);
-        } catch (EmptyResultDataAccessException exception) {
+        } catch (Exception exception) {
             logger.error("Error while fetching exercise from database with uuid : " + uuid);
             return Optional.empty();
         }

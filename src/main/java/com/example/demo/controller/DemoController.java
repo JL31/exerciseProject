@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.dataModels.ExerciseUuid;
 import com.example.demo.tools.ResourceNotFoundException;
-import com.example.demo.usecases.IExerciseServerSide;
 
 import com.example.demo.usecases.IUsecaseResponse;
 import com.example.demo.usecases.createExercise.CreateExerciseUsecase;
@@ -12,9 +11,6 @@ import com.example.demo.usecases.getExercise.FetchedExercise;
 import com.example.demo.usecases.getExercise.GetExerciseUsecase;
 
 import com.example.demo.dataModels.BaseExercise;
-
-import com.example.demo.serverSide.ServerSideAdapter;
-import com.example.demo.tools.DataSourceConfig;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,40 +25,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import javax.sql.DataSource;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+
 
 @RestController
 @RequestMapping("/exercise")
 public class DemoController {
 
     private static final Logger logger = LoggerFactory.getLogger(DemoController.class);
-    private DataSourceConfig databaseSource = null;
-    private DataSource databaseConnector = null;
-    private IExerciseServerSide serverSideInterface = null;
-    private CreateExerciseUsecase exerciseCreation = null;
-    private GetExerciseUsecase exerciseFetching = null;
-//    private final CreateExerciseUsecase exerciseCreation;
-//    private final GetExerciseUsecase exerciseFetching;
+    private final CreateExerciseUsecase exerciseCreation;
+    private final GetExerciseUsecase exerciseFetching;
 
     public DemoController(CreateExerciseUsecase exerciseCreation, GetExerciseUsecase exerciseFetching) {
 
-        try {
-            this.databaseSource = new DataSourceConfig();
-            this.databaseConnector = this.databaseSource.dataSource();
-            this.serverSideInterface = new ServerSideAdapter(this.databaseConnector);
-        } catch (Exception databaseException) {
-            logger.error(databaseException.getMessage());
-        }
-
-        this.exerciseCreation = new CreateExerciseUsecase(this.serverSideInterface);
-        this.exerciseFetching = new GetExerciseUsecase(this.serverSideInterface);
-//        this.exerciseCreation = exerciseCreation;
-//        this.exerciseFetching = exerciseFetching;
+        this.exerciseCreation = exerciseCreation;
+        this.exerciseFetching = exerciseFetching;
 
     }
 
@@ -78,7 +58,7 @@ public class DemoController {
     public ResponseEntity<ApiResponseWithData> createExercise(@RequestBody BaseExercise providedExercise) {
         try {
             Optional<IUsecaseResponse> createdExercise = this.exerciseCreation.execute(providedExercise);
-            CreatedExercise exercise = createdExercise
+            CreatedExercise exercise = createdExercise // TODO : bien comprendre la syntaxe
                 .filter(CreatedExercise.class::isInstance)
                 .map(CreatedExercise.class::cast)
                 .orElseThrow(() -> new Exception("Issue during exercise insertion into database")
@@ -142,20 +122,10 @@ public class DemoController {
             return new ResponseEntity<>(
                 new ApiResponseWithData(
                     HttpStatus.OK.value(),
-                    "Data successfully created",
+                    "Data successfully fetched",
                     fetchedExerciseMapping(exercise)
                 ),
                 HttpStatus.OK
-            );
-        } catch (IllegalArgumentException exception) {
-            logger.error(exception.getMessage());
-            return new ResponseEntity<>(
-                new ApiResponseWithData(
-                    HttpStatus.BAD_REQUEST.value(),
-                    "Bad request",
-                    null
-                ),
-                HttpStatus.BAD_REQUEST
             );
         } catch (ResourceNotFoundException exception) {
             logger.error(exception.getMessage());
