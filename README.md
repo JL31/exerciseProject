@@ -1,7 +1,7 @@
 # Exercise project
 
-## Intro
-A simple project to test REST API development with Java. The idea is to develop (CRUD) tools handle sport exercises.
+## Introduction
+A simple project to test REST API development with Java. The idea is to develop (CRUD) tools to handle sport exercises.
 
 ## Configuration
 * Language : Java version 21
@@ -11,10 +11,14 @@ A simple project to test REST API development with Java. The idea is to develop 
 ## Test
 ### Setup
 To test this project simply download it and use the classic command (in a CLI) : `docker-compose up --build`<br/>
-The prerequisites is for you to have Docker and docker-compose (in a recent version) installed on your machine. Then you can use a REST client (such as Postman) to test the developed APIS.
+The prerequisites is for you to have **Docker** and **docker-compose** (in a recent version) installed on your machine. Then you can use a REST client (such as Postman) to test the developed APIS.
 
-### Test
-Once the server is up you can test the APIs. For now only two have been implemented : create an exercise and get an existing exercise. Here are some commands to test them :
+### API test
+Once the server is up you can test the APIs. For now only two have been implemented :
+* create an exercise ;
+* get an existing exercise.
+
+Here are some commands to test them :
 * Create an exercise (it will return the UUID of the created exercise) :
 ```
 curl --location 'http://localhost:8080/api/exercise' \
@@ -30,8 +34,8 @@ curl --location 'http://localhost:8080/api/exercise' \
   }
   '
 ```
-* Get an existing exercise :
-`̀``
+* Get an existing exercise (through its UUID) :
+```
 curl --location 'http://localhost:8080/api/exercise/{exerciseUuid}'
 ```
-Replace the `{exerciseUuid}` with an UUID fetched after an exercise creation.
+Replace the `{exerciseUuid}` part with an UUID fetched after an exercise creation.
