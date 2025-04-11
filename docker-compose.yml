@@ -1,0 +1,51 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    container_name: springboot-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:  # variables used in the application.yml
+      DATABASE_HOST: database  # it is mandatory to use the name of the service (container) that handles the database
+      DATABASE_PORT: 5432
+      DATABASE_NAME: my-postgres-database
+      DATABASE_USER: user
+      DATABASE_PASSWORD: password
+    networks:
+      - spring-net
+
+  database:
+    image: postgres:15
+    container_name: my-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: my-postgres-database
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./configuration/database_scripts/database_initialization.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U user -d my-postgres-database" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - spring-net
+
+volumes:
+  postgres_data:
+
+networks:
+  spring-net:

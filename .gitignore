@@ -31,7 +31,6 @@ bin/
 
 ### Configuration ###
 configuration/
-src/main/resources/application.yml
 
-### target ###
+### target (Maven build) ###
 target/

@@ -22,8 +22,6 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.dao.EmptyResultDataAccessException;
-
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -88,6 +86,7 @@ public class ServerSideAdapter implements IExerciseServerSide {
             return Optional.of(new CreatedExercise(new ExerciseUuid(generatedUuid)));
         } catch (Exception exception) {
             logger.error("Error while inserting exercise into database");
+            logger.error(exception.getMessage());
             return Optional.empty();
         }
 
@@ -113,6 +112,7 @@ public class ServerSideAdapter implements IExerciseServerSide {
             return Optional.of(exercise);
         } catch (Exception exception) {
             logger.error("Error while fetching exercise from database with uuid : " + uuid);
+            logger.error(exception.getMessage());
             return Optional.empty();
         }
 

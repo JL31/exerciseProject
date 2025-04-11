@@ -1,0 +1,3 @@
+---
+--- Queries to insert data into tables
+---
