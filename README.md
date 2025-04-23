@@ -5,6 +5,7 @@ A simple project to test REST API development with Java. The idea is to develop 
 
 ## Configuration
 * Language : Java version 21
+* Software architecture : hexagonal architecture
 * Framework : Spring Boot
 * Build tool : Maven
 
