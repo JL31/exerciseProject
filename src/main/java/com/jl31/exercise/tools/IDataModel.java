@@ -7,5 +7,9 @@ import java.util.Map;
  */
 public interface IDataModel {
 
+    /**
+     * Enables to get data
+     * @return the data
+     */
     Map<String, Object> getData();
 }

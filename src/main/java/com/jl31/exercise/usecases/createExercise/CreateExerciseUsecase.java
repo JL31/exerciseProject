@@ -23,7 +23,9 @@ import java.text.MessageFormat;
 import com.google.gson.Gson;
 import org.springframework.stereotype.Service;
 
-
+/**
+ * Usecase to handle the process of an exercise creation
+ */
 @Service
 public class CreateExerciseUsecase extends AbstractUsecase {
 
@@ -37,10 +39,20 @@ public class CreateExerciseUsecase extends AbstractUsecase {
 
     IExerciseServerSide serverSideAdapter;
 
+    /**
+     * Exercise creation usecase constructor
+     * @param serverSideAdapter exercise server side adapter
+     */
     public CreateExerciseUsecase (IExerciseServerSide serverSideAdapter) {
         this.serverSideAdapter = serverSideAdapter;
     }
 
+    /**
+     * Ensures the data provided to this usecase match the expected formats
+     * @param usecaseRequest the usecases request to be validated
+     * @return the usecase request validation result
+     * @throws IllegalArgumentException thrown if provided data of incorrect type
+     */
     @Override
     public UsecaseRequestValidation isValidRequest(IDataModel usecaseRequest) throws IllegalArgumentException {
         if (!(usecaseRequest instanceof Exercise exercise)) {
@@ -66,6 +78,12 @@ public class CreateExerciseUsecase extends AbstractUsecase {
         return new UsecaseRequestValidation(validity, invalidParameters);
     }
 
+    /**
+     * Creates an exercise from provided data
+     * @param usecaseRequest all relevant data to serve implemented business logic
+     * @return added exercise data
+     * @throws Exception generic exception to cover all cases that can occur during creation process
+     */
     @Override
     public IUsecaseResponse execute(IDataModel usecaseRequest) throws Exception {
 

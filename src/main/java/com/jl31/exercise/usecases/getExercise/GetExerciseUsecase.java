@@ -17,7 +17,9 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Optional;
 
-
+/**
+ * Usecase to handle the process of fetching an exercise
+ */
 @Service
 public class GetExerciseUsecase extends AbstractUsecase {
 
@@ -25,15 +27,31 @@ public class GetExerciseUsecase extends AbstractUsecase {
 
     IExerciseServerSide serverSideAdapter;
 
+    /**
+     * Exercise fetching usecase constructor
+     * @param serverSideAdapter exercise server side adapter
+     */
     public GetExerciseUsecase(IExerciseServerSide serverSideAdapter) {
         this.serverSideAdapter = serverSideAdapter;
     }
 
+    /**
+     * Ensures the data provided to this usecase match the expected formats
+     * @param usecaseRequest the usecases request to be validated
+     * @return the usecase request validation result
+     * @throws Exception generic exception that can be thrown during validation process
+     */
     @Override
     public UsecaseRequestValidation isValidRequest(IDataModel usecaseRequest) throws Exception {
         return new UsecaseRequestValidation(true, new HashMap<>());
     }
 
+    /**
+     * Fetches an exercise from provided data
+     * @param inputExercise all relevant data to serve implemented business logic
+     * @return fetched exercise data
+     * @throws Exception generic exception to cover all cases that can occur during fetching process
+     */
     @Override
     public IUsecaseResponse execute(IDataModel inputExercise) throws Exception {
 
